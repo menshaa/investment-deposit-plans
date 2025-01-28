@@ -56,11 +56,12 @@ This ensures that the deposit is allocated in proportion to the planned amounts 
 
 #### 3. Edge Cases
 
-- If a deposit plan's total amount is **zero**, the deposit will be fully allocated to the portfolios equally.
+1. Handling Zero Deposit Plan's Total Amount
+   If a deposit plan's total amount is **zero**, the deposit will be fully allocated to the portfolios equally.
 
 **Example:**
 
-- Deposit amount: **RM9000**
+- Deposit amount: **RM900**
 - Deposit plan:
   - Portfolio A: **RM0**
   - Portfolio B: **RM0**
@@ -72,3 +73,26 @@ In this case, each portfolio will receive **RM300**:
 - **Portfolio B** receives RM300
 - **Portfolio C** receives RM300
 - The entire deposit amount of RM900 is fully utilized.
+
+2. Handling Excess Deposit
+   If a deposit **exceeds** the total planned amount for the deposit plan, the **remainder** of the deposit will be treated as a separate deposit and allocated proportionally to the portfolios. This process continues until the entire deposit is fully utilized.
+
+**Example:**
+
+- Deposit amount: **RM1000**
+- Deposit plan:
+  - Portfolio A: **RM100**
+  - Portfolio B: **RM100**
+
+In this scenario, the total planned amount for the portfolios is **RM200** (RM100 for Portfolio A and RM100 for Portfolio B). Initially, both portfolios receive their planned allocation:
+
+- **Portfolio A**: RM100
+- **Portfolio B**: RM100
+
+This leaves a **remainder of RM800** from the initial deposit. The remainder is treated as a new deposit and is allocated proportionally to the portfolios.
+Thus, at the end of the remainder's allocation:
+
+- **Portfolio A** receives: **RM500**
+- **Portfolio B** receives: **RM500**
+
+The deposit is now fully utilized.
