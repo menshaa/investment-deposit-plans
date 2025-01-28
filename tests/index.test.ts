@@ -318,8 +318,8 @@ describe("Determine deposit allocations function (Two deposit plans)", () => {
         type: depositPlanTypes.MONTHLY,
         portfolios: [
           {
-            portfolioId: 3,
-            amount: 500,
+            portfolioId: 2,
+            amount: 100,
           },
         ],
       },
@@ -329,7 +329,7 @@ describe("Determine deposit allocations function (Two deposit plans)", () => {
         portfolios: [
           {
             portfolioId: 1,
-            amount: 1000,
+            amount: 10000,
           },
           {
             portfolioId: 2,
@@ -338,20 +338,58 @@ describe("Determine deposit allocations function (Two deposit plans)", () => {
         ],
       },
     ];
-    const deposits = [1500, 2000];
+    const deposits = [10500, 100];
     const result = determineDepositAllocation(depositPlans, deposits);
     const expectedResult: portfolioAllocations[] = [
       {
         portfolioId: 1,
-        allocatedAmount: 2000.0,
+        allocatedAmount: 10000.0,
       },
       {
         portfolioId: 2,
-        allocatedAmount: 1000.0,
+        allocatedAmount: 600.0,
+      },
+    ];
+    expect(result).toEqual(expect.arrayContaining(expectedResult));
+  });
+
+  it("Should correctly allocate deposits (2) to portfolios (one_time deposit is priority)", () => {
+    const depositPlans: depositPlans[] = [
+      {
+        depositPlanId: 2,
+        type: depositPlanTypes.MONTHLY,
+        portfolios: [
+          {
+            portfolioId: 2,
+            amount: 100,
+          },
+        ],
       },
       {
-        portfolioId: 3,
-        allocatedAmount: 500.0,
+        depositPlanId: 1,
+        type: depositPlanTypes.ONE_TIME,
+        portfolios: [
+          {
+            portfolioId: 1,
+            amount: 10000,
+          },
+          {
+            portfolioId: 2,
+            amount: 500,
+          },
+        ],
+      },
+    ];
+    const deposits = [10500, 100, 100];
+    const result = determineDepositAllocation(depositPlans, deposits);
+    const expectedResult: portfolioAllocations[] = [
+      {
+        portfolioId: 1,
+        allocatedAmount: 10095.2381,
+      },
+      {
+        portfolioId: 2,
+        allocatedAmount: 604.7619,
       },
     ];
     expect(result).toEqual(expect.arrayContaining(expectedResult));

@@ -115,8 +115,13 @@ function _calculateAllocations(
   allocations: depositPlanAndPortfolioAllocationObject,
   remainderDeposit: number,
   deposit: number,
-  depositPlans: depositPlans[]
+  depositPlans: depositPlans[],
+  bypassDepositPlanFullyAllocatedCheck: boolean = false
 ): depositPlanAndPortfolioAllocationObject {
+  /**
+   * fullyAllocatedDepositPlansCount is maintained to count deposit plans that are fully allocated
+   */
+  let fullyAllocatedDepositPlansCount = 0;
   for (const depositPlan of depositPlans) {
     const { portfolios = [], depositPlanId } = depositPlan;
     if (portfolios.length === 0) {
@@ -128,6 +133,23 @@ function _calculateAllocations(
       depositPlan.portfolios,
       depositPlan.depositPlanId
     );
+
+    const isDepositPlanFullyAllocated = _checkIfDepositPlanIsFullyAllocated(
+      defaultAllocations,
+      depositPlan.depositPlanId
+    );
+
+    // if bypassDepositPlanFullyAllocatedCheck is true, it means all deposit plans are fully allocated, we are now allocating excess deposit amounts.
+    if (isDepositPlanFullyAllocated && !bypassDepositPlanFullyAllocatedCheck) {
+      fullyAllocatedDepositPlansCount += 1;
+
+      // if fullyAllocatedDepositPlansCount is equal to deposit plans, it means all deposit plans are fully allocated. In that case, we should bypass the below check and allow excess deposit to be allocated.
+      if (fullyAllocatedDepositPlansCount === depositPlans.length) {
+        break;
+      } else {
+        continue;
+      }
+    }
 
     let totalDepositPlanAmount = _calculateDepositPlanTotalAmount(depositPlan);
     let isDepositFullyUsed = false;
@@ -169,7 +191,16 @@ function _calculateAllocations(
 
     allocations = { ...allocations, ...defaultAllocations };
   }
-  if (remainderDeposit > 0) {
+
+  if (fullyAllocatedDepositPlansCount === depositPlans.length) {
+    allocations = _calculateAllocations(
+      allocations,
+      remainderDeposit,
+      deposit,
+      depositPlans,
+      true
+    );
+  } else if (remainderDeposit > 0) {
     allocations = _calculateAllocations(
       allocations,
       remainderDeposit,
@@ -201,5 +232,15 @@ function _sumPortfolioAllocatedAmounts(
       portfolioId: Number(portfolioId),
       allocatedAmount: Number((amount as number).toFixed(4)),
     })
+  );
+}
+
+function _checkIfDepositPlanIsFullyAllocated(
+  defaultAllocations: depositPlanAndPortfolioAllocationObject,
+  depositPlanId: number
+): boolean {
+  const targetAllocations = defaultAllocations[`deposit_plan_${depositPlanId}`];
+  return Object.values(targetAllocations).every(
+    (amounts) => amounts.plannedAmount === amounts.allocatedAmount
   );
 }
