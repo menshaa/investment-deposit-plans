@@ -1,0 +1,14 @@
+// tsconfig.json (for production)
+{
+  "compilerOptions": {
+    "target": "ES6",
+    "module": "commonjs",
+    "strict": true,
+    "esModuleInterop": true,
+    "outDir": "./dist",
+    "rootDir": "./src",  // Enforcing source files to stay in the src folder
+    "skipLibCheck": true
+  },
+  "include": ["src/**/*.ts"],  // Only include src files for production
+  "exclude": ["node_modules", "tests"]
+}

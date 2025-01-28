@@ -1,0 +1,10 @@
+// tsconfig.test.json (for testing)
+{
+    "extends": "./tsconfig.json",  // Extending the main tsconfig
+    "compilerOptions": {
+      "outDir": "./dist"  // Keep compiled files in the dist folder
+    },
+    "include": ["src/**/*.ts", "tests/**/*.ts"],  // Include both src and test files
+    "exclude": ["node_modules"]
+  }
+  
