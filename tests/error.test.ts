@@ -84,4 +84,18 @@ describe("Determine deposit allocations function (Errors)", () => {
       ERROR_MESSAGES.VALIDATION.DEPOSITS
     );
   });
+
+  it("Should throw error if deposit plan doesnt not include a portfolio", () => {
+    const depositPlans: depositPlans[] = [
+      {
+        depositPlanId: 1,
+        type: depositPlanTypes.ONE_TIME,
+        portfolios: [],
+      },
+    ];
+    const deposits: number[] = [400];
+    expect(() => determineDepositAllocation(depositPlans, deposits)).toThrow(
+      ERROR_MESSAGES.VALIDATION.PORTFOLIOS
+    );
+  });
 });

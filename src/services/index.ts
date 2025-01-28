@@ -118,7 +118,11 @@ function _calculateAllocations(
   depositPlans: depositPlans[]
 ): depositPlanAndPortfolioAllocationObject {
   for (const depositPlan of depositPlans) {
-    const { portfolios, depositPlanId } = depositPlan;
+    const { portfolios = [], depositPlanId } = depositPlan;
+    if (portfolios.length === 0) {
+      throw new Error(ERROR_MESSAGES.VALIDATION.PORTFOLIOS);
+    }
+
     const defaultAllocations = _preparePortfolioAllocationsObject(
       allocations,
       depositPlan.portfolios,
