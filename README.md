@@ -1,6 +1,6 @@
 ## Description
 
-Stashaway deposit plan Solution.
+This project is an Investment Deposit Plan Solution that enables customers to allocate their deposits across multiple investment portfolios efficiently. The system enforces business rules to ensure proper allocation and validation of deposits while handling various edge cases in investment distribution.
 
 ## Setup
 
